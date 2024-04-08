@@ -1,41 +1,57 @@
-# Compiled Lua sources
-luac.out
+-- abaixo estar a nossa UI
+local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/7yhx/kwargs_Ui_Library/main/source.lua"))()
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+local UI = Lib:Create{
+    Theme = "Dark", -- or any other theme
+    Size = UDim2.new(0, 555, 0, 400) -- default
+ }
+ 
+ local Main = UI:Tab{
+    Name = "inicio"
+ }
+ 
+ local Divider = Main:Divider{
+    Name = "inicio shit"
+ }
+ 
+ local QuitDivider = Main:Divider{
+    Name = "sair"
+ }
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
+ -- Script para farm de ovos no Murder Mystery 2
+-- Certifique-se de que o executor de scripts esteja aberto e o jogo esteja em execução
 
-# Precompiled Headers
-*.gch
-*.pch
+local teleportDelay = 2 -- Tempo de espera em segundos entre as teletransportações
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
+-- Função para teletransportar o jogador para um ovo
+local function teleportToEgg(eggPosition)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(eggPosition)
+    wait(teleportDelay)
+end
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+-- Função para verificar se um ovo está próximo
+local function isEggNearby(eggPosition)
+    local playerPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+    local distance = (eggPosition - playerPosition).Magnitude
+    return distance < 10 -- Ajuste a distância conforme necessário
+end
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+-- Loop principal
+while true do
+    -- Verifica se há ovos normais nas proximidades
+    for _, egg in pairs(game.Workspace.Eggs:GetChildren()) do
+        if egg.Name == "NormalEgg" and isEggNearby(egg.Position) then
+            teleportToEgg(egg.Position)
+        end
+    end
 
+    -- Verifica se há ovos raros nas proximidades
+    for _, egg in pairs(game.Workspace.Eggs:GetChildren()) do
+        if egg.Name == "RareEgg" and isEggNearby(egg.Position) then
+            teleportToEgg(egg.Position)
+        end
+    end
+
+    -- Aguarda um tempo antes de verificar novamente
+    wait(1)
+end
